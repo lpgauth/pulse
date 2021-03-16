@@ -5,6 +5,6 @@
   {vsn, git},
   {registered, [pulse_sup]},
   {modules, [pulse, pulse_sup, pulse_db]},
-  {applications, [kernel, stdlib]},
+  {applications, [kernel, stdlib, foil]},
   {env, []}
  ]}.

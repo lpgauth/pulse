@@ -1,12 +1,24 @@
+{"1.2.0",
 [{<<"bear">>,
   {git,"https://github.com/boundary/bear.git",
        {ref,"119234548783af19b8ec75c879c5062676b92571"}},
   1},
+ {<<"foil">>,
+  {git,"https://github.com/lpgauth/foil.git",
+       {ref,"732b3fda33aa591de774627621171f95395bca57"}},
+  0},
  {<<"hdr_histogram_erl">>,
   {git,"https://github.com/HdrHistogram/hdr_histogram_erl.git",
        {ref,"075798518aabd73a0037007989cde8bd6923b4d9"}},
   1},
+ {<<"metal">>,{pkg,<<"metal">>,<<"0.1.1">>},1},
  {<<"timing">>,
   {git,"https://github.com/lpgauth/timing.git",
        {ref,"e91214f53254c28e1c6a9664f152d49f6d81c8b3"}},
-  0}].
+  0}]}.
+[
+{pkg_hash,[
+ {<<"metal">>, <<"5D3D1322DA7BCD34B94FED5486F577973685298883954F7A3E517EF5EF6953F5">>}]},
+{pkg_hash_ext,[
+ {<<"metal">>, <<"88B82B634998A1A768DEDCD372C2F7E657B19445325C0AF5CCBAC62C77210F1D">>}]}
+].

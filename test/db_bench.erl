@@ -5,6 +5,7 @@
 -define(RUNS, 1000).
 
 write(Type, N, P) ->
+    foil_app:start(),
     pulse_db:new(),
     try
         [pulse_db:write(Type, rand_key(Type), 1) || _ <- lists:seq(0, N)],
@@ -22,6 +23,7 @@ write_test() ->
     ].
 
 write_tags(Type, N, P) ->
+    foil_app:start(),
     pulse_db:new(),
     try
         [pulse_db:write(Type, rand_key(Type), rand_tag(tag, N), 1) || _ <- lists:seq(0, 100 * N)],

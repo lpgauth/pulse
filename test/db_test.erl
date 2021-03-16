@@ -3,6 +3,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 dump_test() ->
+    foil_app:start(),
     pulse_db:new(),
     try
         pulse_db:write(gauge, gauge, 100),

@@ -2,7 +2,7 @@
 
 -export([new/0, free/0, write/3, write/4, dump/1]).
 
--define(DB, pulse).
+-define(FOIL, pulse_db_foil).
 
 -define(SUMMARY_ADJUST_RATIO, 1000).
 
@@ -22,12 +22,13 @@
 
 -spec new() -> ok.
 new() ->
-    ?DB = ets:new(?DB, [set, public, named_table, {read_concurrency, true}]),
+    foil:new(?MODULE),
+    foil:load(?MODULE),
     ok.
 
 -spec free() -> ok.
 free() ->
-    true = ets:delete(?DB),
+    ok = foil:delete(?MODULE),
     ok.
 
 -spec write(type(), pulse:key(), number()) -> ok.
@@ -40,16 +41,17 @@ write(Type, Key, Tag, Value) ->
 
 -spec metric(type(), pulse:key(), pulse:tag(), number()) -> metric().
 metric(Type, Key, Tag, Value) ->
-    case ets:lookup(?DB, Key) of
-        [{Key, Metric}] ->
+    case ?FOIL:lookup(Key) of
+        {ok, Metric} ->
             Metric;
-        [] ->
+        {error, key_not_found} ->
             Metric = new(Type, Tag, Value),
-            case ets:insert_new(?DB, {Key, Metric}) of
+            case foil:insert_new(?MODULE, Key, Metric) of
                 false ->
-                    [{Key, Metric}] = ets:lookup(?DB, Key),
+                    {ok, Metric} = foil:lookup(?MODULE, Key),
                     Metric;
                 _ ->
+                    foil:load(?MODULE),
                     Metric
             end
     end.
@@ -84,7 +86,7 @@ update(Type, Key, {TagKey, TagVal}, Value, Tag = #tag{key = TagKey, values = Map
         _ ->
             Metric = new(Type, {}, Value),
             update(Type, Key, {}, Value, Metric),
-            true = ets:insert(?DB, {Key, Tag#tag{values = Map#{TagVal => Metric}}}),
+            true = foil:insert(?MODULE, Key, Tag#tag{values = Map#{TagVal => Metric}}),
             ok
     end;
 update(Type, Key, Tag, Value, Metric) ->
@@ -103,7 +105,7 @@ update_quantile(#summary{base = Base, adjust = Adjust, quantiles = Counters}, Ix
 
 -spec dump(binary()) -> iolist().
 dump(Prefix) ->
-    ets:foldl(fun(Row, Acc) -> encode(Prefix, Row, Acc) end, [], ?DB).
+    foil:foldl(fun(Row, Acc) -> encode(Prefix, Row, Acc) end, [], ?MODULE).
 
 -spec encode(binary(), {pulse:key(), metric()}, iolist()) -> iolist().
 encode(Prefix, {Key, #tag{key = TagKey, values = Map}}, Acc) ->
