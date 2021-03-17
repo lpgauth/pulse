@@ -87,6 +87,7 @@ update(Type, Key, {TagKey, TagVal}, Value, Tag = #tag{key = TagKey, values = Map
             Metric = new(Type, {}, Value),
             update(Type, Key, {}, Value, Metric),
             true = foil:insert(?MODULE, Key, Tag#tag{values = Map#{TagVal => Metric}}),
+            foil:load(?MODULE),
             ok
     end;
 update(Type, Key, Tag, Value, Metric) ->
